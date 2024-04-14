@@ -1,8 +1,6 @@
-import { Link } from "react-router-dom";
-
 import { useEffect, useReducer } from "react";
 import axios from "axios";
-import logger from "use-reducer-logger";
+import Card from "../components/Card";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -30,7 +28,7 @@ const reducer = (state, action) => {
 
 function HomeScreen() {
   //const [products, setProducts] = useState([]);
-  const [{ loading, error, products }, dispatch] = useReducer(logger(reducer), {
+  const [{ loading, error, products }, dispatch] = useReducer(reducer, {
     loading: true,
     error: "",
     products: [],
@@ -59,29 +57,14 @@ function HomeScreen() {
 
   return (
     <div>
-      <h1>Featured Products</h1>
+      <h1 className="text-3xl ml-5">Featured Products</h1>
       <div className="products">
         {loading ? (
           <div>Loading...</div>
         ) : error ? (
           <div>{error}</div>
         ) : (
-          products.map((product) => (
-            <div className="product" key={product.slug}>
-              <Link to={`/product/${product.slug}`}>
-                <img src={product.image} alt={product.name} />
-              </Link>
-              <div className="product-info">
-                <Link to={`/product/${product.slug}`}>
-                  <p>{product.name}</p>
-                </Link>
-                <p>
-                  <strong>${product.price}</strong>
-                </p>
-                <button>Add to cart</button>
-              </div>
-            </div>
-          ))
+          products.map((product) => <Card product={product} />)
         )}
       </div>
     </div>

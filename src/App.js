@@ -1,13 +1,14 @@
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomeScreen from "./screens/HomeScreen";
 import ProductScreen from "./screens/ProductScreen";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <BrowserRouter>
       <div>
-        <header>
-          <Link to="/">amazona</Link>
+        <header className="">
+          <Navbar />
         </header>
         <main>
           <Routes>
