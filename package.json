@@ -39,6 +39,7 @@
     ]
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.3"
+    "tailwindcss": "^3.4.3",
+    "use-reducer-logger": "^1.0.2"
   }
 }
