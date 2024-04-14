@@ -10,7 +10,7 @@ function App() {
         <header className="">
           <Navbar />
         </header>
-        <main class="container mx-auto">
+        <main class="container px-20 m-auto">
           <Routes>
             <Route path="/product/:slug" element={<ProductScreen />} />
             <Route path="/" element={<HomeScreen />} />

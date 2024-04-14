@@ -2,6 +2,8 @@ import { useEffect, useReducer } from "react";
 import axios from "axios";
 import Card from "../components/Card";
 import { Helmet } from "react-helmet-async";
+import Loader from "../components/Loader";
+import MessageBox from "../components/MessageBox";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -61,12 +63,12 @@ function HomeScreen() {
       <Helmet>
         <title>Mystore</title>
       </Helmet>
-      <h1 className="text-3xl ml-5">Featured Products</h1>
-      <div className="products">
+      <h1 className="text-3xl ml-20">Featured Products</h1>
+      <div className="grid grid-cols-4 gap-5">
         {loading ? (
-          <div>Loading...</div>
+          <Loader />
         ) : error ? (
-          <div>{error}</div>
+          <MessageBox error={error} />
         ) : (
           products.map((product) => <Card product={product} />)
         )}

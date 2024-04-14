@@ -3,6 +3,9 @@ import { useEffect, useReducer } from "react";
 import { Link, useParams } from "react-router-dom";
 import Rating from "../components/Rating";
 import { Helmet } from "react-helmet-async";
+import Loader from "../components/Loader";
+import MessageBox from "../components/MessageBox";
+import { getError } from "../utils";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -52,16 +55,16 @@ function ProductScreen() {
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
-          payload: error.message,
+          payload: getError(error),
         });
       }
     };
     fetchData();
   }, [slug]);
   return loading ? (
-    <div>...Loading</div>
+    <Loader />
   ) : error ? (
-    <div>Error: {error}</div>
+    <MessageBox error={error} />
   ) : (
     <div className="container mx-auto py-12">
       <div className="flex">
