@@ -1,11 +1,118 @@
-import { useParams } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useReducer } from "react";
+import { Link, useParams } from "react-router-dom";
+import Rating from "../components/Rating";
+import { Helmet } from "react-helmet-async";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return {
+        ...state,
+        loading: true,
+      };
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        product: action.payload,
+      };
+    case "FETCH_FAIL":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
 function ProductScreen() {
   const params = useParams();
   const { slug } = params;
-  return (
-    <div>
-      <h1>{slug}</h1>
+
+  const [{ loading, error, product }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: "",
+    product: [],
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch({
+        type: "FETCH_REQUEST",
+      });
+      try {
+        const response = await axios.get(`/api/products/slug/${slug}`);
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: response.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: error.message,
+        });
+      }
+    };
+    fetchData();
+  }, [slug]);
+  return loading ? (
+    <div>...Loading</div>
+  ) : error ? (
+    <div>Error: {error}</div>
+  ) : (
+    <div className="container mx-auto py-12">
+      <div className="flex">
+        <div className="thumbnail lg:flex-1">
+          <div className="group/show w-4/5 h-[550px] overflow-hidden cursor-pointer">
+            <img
+              className="object-cover h-full w-full group-hover/show:scale-105 transition ease-in-out delay-150 z-1"
+              alt={product.name}
+              src={product.image}
+            />
+          </div>
+          <div className="carousel flex mt-4 overflow-hidden">
+            <div className="item w-[100px] h-[100px] mr-2">
+              <img
+                className="cursor-pointer object-cover h-full w-full "
+                alt={product.name}
+                src={product.image}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="content lg:flex-1 p-6">
+          <Helmet>
+            <title>{product.name}</title>
+          </Helmet>
+          <p className="leading-7">{product.name}</p>
+          <p className="leading-7">{product.description}</p>
+          <p className="mb-3 font-semibold text-lg">
+            {" "}
+            Price : {product.price} €
+          </p>
+          <Rating rating={product.rating} numReviews={product.numReviews} />
+          <div>
+            {product.countInStock > 0 ? (
+              <>
+                <div className="badge badge-success">En Stock</div>
+                <div className="group-hover/card:opacity-100 transition ease-in-out delay-150">
+                  <Link
+                    className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-slate-500 font-medium text-center text-slate-500 bg-white hover:bg-slate-500 hover:text-white"
+                    href="/panier"
+                  >
+                    Aouter au panier
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <span className="badge badge-error">En rupture de stock</span>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
