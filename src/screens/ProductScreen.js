@@ -1,11 +1,12 @@
 import axios from "axios";
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import { Link, useParams } from "react-router-dom";
 import Rating from "../components/Rating";
 import { Helmet } from "react-helmet-async";
 import Loader from "../components/Loader";
 import MessageBox from "../components/MessageBox";
 import { getError } from "../utils";
+import { Store } from "../Store";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -61,6 +62,18 @@ function ProductScreen() {
     };
     fetchData();
   }, [slug]);
+
+  const { dispatch: ctxDispatch } = useContext(Store);
+  const addToCartHandler = () => {
+    ctxDispatch({
+      type: "ADD_TO_CART",
+      payload: {
+        ...product,
+        quantity: 1,
+      },
+    });
+  };
+
   return loading ? (
     <Loader />
   ) : error ? (
@@ -105,6 +118,7 @@ function ProductScreen() {
                   <Link
                     className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-slate-500 font-medium text-center text-slate-500 bg-white hover:bg-slate-500 hover:text-white"
                     href="/panier"
+                    onClick={addToCartHandler}
                   >
                     Aouter au panier
                   </Link>
