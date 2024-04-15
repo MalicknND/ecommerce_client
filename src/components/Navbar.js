@@ -31,7 +31,8 @@ const Navbar = () => {
                 />
               </svg>
               <span className="badge badge-sm indicator-item">
-                {cart.cartItems.length > 0 && cart.cartItems.length}
+                {cart.cartItems.length > 0 &&
+                  cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
               </span>
             </div>
           </div>
