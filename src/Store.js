@@ -6,7 +6,9 @@ export const Store = createContext();
 // État initial du store
 const initialState = {
   cart: {
-    cartItems: [], // Tableau d'articles dans le panier
+    cartItems: localStorage.getItem("cartItems")
+      ? JSON.parse(localStorage.getItem("cartItems"))
+      : [],
   },
 };
 
@@ -23,8 +25,17 @@ function reducer(state, action) {
             item._id === existItem._id ? newItem : item
           )
         : [...state.cart.cartItems, newItem];
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
       return { ...state, cart: { ...state.cart, cartItems } };
 
+    case "CART_REMOVE_ITEM": {
+      // Action pour supprimer un article du panier
+      const cartItems = state.cart.cartItems.filter(
+        (item) => item._id !== action.payload._id
+      );
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      return { ...state, cart: { ...state.cart, cartItems } };
+    }
     default:
       return state;
   }

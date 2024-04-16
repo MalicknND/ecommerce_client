@@ -1,13 +1,38 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Store } from "../Store";
 import { Helmet } from "react-helmet-async";
+import axios from "axios";
 
 const CartScreen = () => {
-  const { state } = useContext(Store);
+  const navigate = useNavigate();
+  const { state, dispatch: ctxDispatch } = useContext(Store);
   const {
     cart: { cartItems },
   } = state;
+
+  const updateCartHandler = async (item, quantity) => {
+    const { data } = await axios.get(`/api/products/${item._id}`);
+    if (data.countInStock < quantity) {
+      window.alert("Sorry. Product is out of stock");
+      return;
+    }
+    ctxDispatch({
+      type: "CART_ADD_ITEM",
+      payload: { ...item, quantity },
+    });
+  };
+
+  const removeItemHandler = (item) => {
+    ctxDispatch({
+      type: "CART_REMOVE_ITEM",
+      payload: item,
+    });
+  };
+
+  const checkoutHandler = () => {
+    navigate("/signin?redirect=shipping");
+  };
 
   return (
     <div className="container mx-auto">
@@ -42,6 +67,9 @@ const CartScreen = () => {
                     <div className="flex items-center space-x-4">
                       <button
                         className="text-gray-500 hover:text-gray-700 disabled:opacity-50"
+                        onClick={() =>
+                          updateCartHandler(item, item.quantity - 1)
+                        }
                         disabled={item.quantity === 1}
                       >
                         <i className="fas fa-minus-circle"></i>
@@ -49,6 +77,9 @@ const CartScreen = () => {
                       <span>{item.quantity}</span>
                       <button
                         className="text-gray-500 hover:text-gray-700 disabled:opacity-50"
+                        onClick={() =>
+                          updateCartHandler(item, item.quantity + 1)
+                        }
                         disabled={item.quantity === item.countInStock}
                       >
                         <i className="fas fa-plus-circle"></i>
@@ -56,7 +87,10 @@ const CartScreen = () => {
 
                       <div>{item.price} €</div>
                     </div>
-                    <button className="text-gray-500 hover:text-gray-700">
+                    <button
+                      onClick={() => removeItemHandler(item)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
                       <i className="fas fa-trash"></i>
                     </button>
                   </li>
@@ -76,6 +110,7 @@ const CartScreen = () => {
               <button
                 disabled={cartItems.length === 0}
                 className="w-full mt-4 bg-black hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded disabled:opacity-50"
+                onClick={checkoutHandler}
               >
                 Paiement
               </button>
