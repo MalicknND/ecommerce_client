@@ -43,7 +43,7 @@ function HomeScreen() {
         type: "FETCH_REQUEST",
       });
       try {
-        const response = await axios.get("/api/products");
+        const response = await axios.get("http://localhost:5000/api/products");
         dispatch({
           type: "FETCH_SUCCESS",
           payload: response.data,
@@ -70,7 +70,9 @@ function HomeScreen() {
         ) : error ? (
           <MessageBox error={error} />
         ) : (
-          products.map((product) => <Card product={product} />)
+          products.map((product) => (
+            <Card product={product} key={product._id} />
+          ))
         )}
       </div>
     </div>

@@ -11,7 +11,7 @@ function App() {
         <header className="">
           <Navbar />
         </header>
-        <main class="container px-20 m-auto">
+        <main className="container px-20 m-auto">
           <Routes>
             <Route path="/cart" element={<CartScreen />} />
             <Route path="/product/:slug" element={<ProductScreen />} />

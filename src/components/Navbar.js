@@ -4,7 +4,10 @@ import { Store } from "../Store";
 
 const Navbar = () => {
   const { state } = useContext(Store);
-  const { cart } = state;
+  const {
+    cart: { cartItems },
+  } = state;
+
   return (
     <div className="navbar bg-base-100 px-16 mt-4">
       <div className="flex-1">
@@ -31,8 +34,8 @@ const Navbar = () => {
                 />
               </svg>
               <span className="badge badge-sm indicator-item">
-                {cart.cartItems.length > 0 &&
-                  cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
+                {cartItems.length > 0 &&
+                  cartItems.reduce((a, c) => a + c.quantity, 0)}
               </span>
             </div>
           </div>
@@ -41,10 +44,16 @@ const Navbar = () => {
             className="mt-3 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow"
           >
             <div className="card-body">
-              <span className="font-bold text-lg">8 Items</span>
-              <span className="text-info">Subtotal: $999</span>
+              <span className="font-bold text-lg">
+                Total ({cartItems.reduce((a, c) => a + c.quantity, 0)} produits){" "}
+              </span>
+              <span className="text-info">
+                {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)} €
+              </span>
               <div className="card-actions">
-                <button className="btn btn-primary btn-block">View cart</button>
+                <a href="/cart" className="btn btn-primary btn-block">
+                  View cart
+                </a>
               </div>
             </div>
           </div>
